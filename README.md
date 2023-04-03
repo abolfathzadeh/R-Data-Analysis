@@ -1,0 +1,15 @@
+# R-Data-Analysis
+
+![image](https://user-images.githubusercontent.com/9671082/229628201-855d37da-58b7-48e2-971e-535d0d385a95.png)
+![image](https://user-images.githubusercontent.com/9671082/229628227-8d9dd3ba-69f3-41bd-9a37-a9979eb3fcc0.png)
+![image](https://user-images.githubusercontent.com/9671082/229628244-bfe5c854-a550-4de7-b387-fc3db7f3f5fa.png)
+![image](https://user-images.githubusercontent.com/9671082/229628262-e573799d-264a-476a-a438-f297a618ca56.png)
+![image](https://user-images.githubusercontent.com/9671082/229628330-e7008233-a4c8-4c04-8ca8-75095b773cb1.png)
+![image](https://user-images.githubusercontent.com/9671082/229628436-82044604-3791-4a91-9e9c-cd6a6a023a7e.png)
+![image](https://user-images.githubusercontent.com/9671082/229628451-f760af8a-50ea-4894-9d55-d8cfb31f95f2.png)
+![image](https://user-images.githubusercontent.com/9671082/229628470-4e089618-409d-4b52-aa97-1696958109c6.png)
+![image](https://user-images.githubusercontent.com/9671082/229628489-4a9b9fb1-86c5-44a8-8075-78c676bf81a3.png)
+![image](https://user-images.githubusercontent.com/9671082/229628555-ab3c633d-c39e-4d8b-9f17-0c826baf3120.png)
+![image](https://user-images.githubusercontent.com/9671082/229628567-5eace715-4eed-4f73-a010-298a60171e98.png)
+![image](https://user-images.githubusercontent.com/9671082/229628581-1ac510e2-7cf9-4776-8c17-bc0fd51373fb.png)
+![image](https://user-images.githubusercontent.com/9671082/229628598-82e9be46-540c-44b7-be22-e5a86a9e7415.png)
