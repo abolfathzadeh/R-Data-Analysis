@@ -1,0 +1,124 @@
+---
+title: "R_airPollution_Outliers"
+author: "Shirin Abolfath Zadeh"
+date: "2023-04-03"
+output: html_document
+---
+
+```{r}
+install.packages('dplyr')
+install.packages('ggplot2')
+```
+#-------------------------------------------------------------------------------
+#Activity 1: Visualising Outliers
+
+```{r}
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+data('airquality')
+```
+
+
+```{r}
+airquality
+```
+
+
+```{r}
+# check for duplicate rows
+duplicate_rows <- airquality[duplicated(airquality),]
+if (nrow(duplicate_rows) > 0) {
+  cat("There are", nrow(duplicate_rows), "duplicate rows in the dataset.\n")
+} else {
+  cat("There are no duplicate rows in the dataset.\n")
+}
+
+
+```
+
+```{r}
+#1. Create a boxplot for the "Ozone" variable
+boxplot(airquality[,c('Ozone')])
+boxplot(airquality[,c('Wind')])
+```
+```{r}
+#2. Create a scatterplot of "Ozone" against "Wind"
+plot(airquality$Ozone, airquality$Wind, main="Scatterplot Example",
+   xlab="Ozone", ylab="Wind ", pch=19)
+
+```
+
+```{r}
+# relationships
+ggplot(airquality, aes(x = Ozone, y = Wind)) + 
+  geom_point() +
+  labs(x = "Ozone", y = "Wind") +
+  theme_bw()
+```
+
+```{r}
+# scatter.smooth of "Ozone" against "Wind"
+scatter.smooth(airquality[,c('Ozone','Wind')])
+
+```
+```{r}
+#3. Create a histogram for the "Ozone" variable.
+hist(airquality[,c('Ozone')])
+```
+
+```{r}
+library(tidyr)
+airquality=drop_na(airquality)
+```
+
+```{r}
+#4. Create a density plot for the "Ozone" variable.
+d <- density(airquality$Ozone)
+plot(d, main=" Density of Ozone")
+polygon(d, col="red", border="blue")
+```
+#-------------------------------------------------------------------------------
+#Activity 2: Detecting Outliers
+
+```{r}
+#1. Detect outliers using the Z-score method with a threshold of 2.
+Ozon_data<- airquality$Ozone
+z_scores_ozone<-scale(Ozon_data)
+treshold<- 2
+outliers_ozone<- Ozon_data[abs(z_scores_ozone)>treshold]
+print(outliers_ozone)
+```
+```{r}
+#2. Detect outliers using the IQR method with a multiplier of 1.5.
+
+Ozon_data<- airquality$Ozone
+IQR_value<-IQR(Ozon_data)
+Q1<- quantile(Ozon_data,0.25)
+Q2<- quantile(Ozon_data,0.75)
+l_bound<- Q1-1.5*IQR_value
+U_bound<- Q2+1.5*IQR_value
+outliers_IQR_ozone<- Ozon_data[Ozon_data<l_bound | Ozon_data > U_bound]
+print(outliers_IQR_ozone)
+```
+```{r}
+#3. Detect outliers using Tukey'sfences.
+Ozon_data<- airquality$Ozone
+outliers_Tukey_ozone<- boxplot.stats(Ozon_data)$out
+print(outliers_Tukey_ozone)
+```
+```{r}
+install.packages("outliers")
+library(outliers)
+```
+
+
+```{r}
+#4. Detect outliers using Grubbs' test.
+Ozon_data<- airquality$Ozone
+grabbs_result<- grubbs.test(Ozon_data,type=10,opposite=FALSE)
+print(grabbs_result)
+```
+#==

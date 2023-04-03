@@ -1,0 +1,116 @@
+---
+title: "R-Handling Outliers"
+author: "Shirin Abolfath Zadeh"
+date: "2023-04-03"
+output: html_document
+---
+#Activity 3: Handling Outliers
+#Objective: Practice various outlier handling techniques on a dataset with known outliers.
+#Dataset: Create a synthetic dataset with a normal distribution and introduce a few outliers.
+
+```{r}
+#1. Create a synthetic dataset with 100 normally distributed data points with a mean of 50 and a standard deviation of 10.
+NumEntries=100
+X=1:NumEntries # create an array with 1,2,3,...
+
+RandomMean=50
+RandomStdDev=10
+
+RandomValues=rnorm(NumEntries, mean = RandomMean, sd = RandomStdDev);
+Y=RandomValues # one number between -1 and 1
+
+#Working on a randomly generated data
+
+RandomValues
+str(RandomValues)
+```
+```{r}
+plot(Y)
+```
+
+
+```{r}
+#2. Introduce 5 outliers to the dataset.
+
+#method1. Z-score 
+
+z_scores_RandomValues<-scale(RandomValues)
+treshold<- 2
+outliers_RandomValues<- RandomValues[abs(z_scores_RandomValues)>treshold]
+print(outliers_RandomValues)
+```
+```{r}
+#method2. IQR 
+IQR_RandomValues<-IQR(RandomValues)
+Q1_RandomValues<- quantile(RandomValues,0.25)
+Q2_RandomValues<- quantile(RandomValues,0.75)
+l_bound_RandomValues<- Q1-1.5*IQR_RandomValues
+U_bound_RandomValues<- Q2+1.5*IQR_RandomValues
+outliers_IQR_RandomValues<- RandomValues[RandomValues<l_bound_RandomValues | RandomValues > U_bound_RandomValues]
+print(outliers_IQR_RandomValues)
+```
+```{r}
+#method3. Tukey'sfences.
+outliers_Tukey_RandomValues<- boxplot.stats(RandomValues)$out
+print(outliers_Tukey_RandomValues)
+```
+```{r}
+#method4. Grubbs' test.
+grabbs_rst<- grubbs.test(RandomValues,type=10,opposite=FALSE)
+print(grabbs_rst)
+```
+
+```{r}
+install.packages('DescTools')
+```
+```{r}
+library(DescTools)
+```
+
+```{r}
+#3. Apply Winsorisation with the 5th and 95th percentiles to handle the outliers.
+Winsorisation_data<- Winsorize(RandomValues,probs = c(0.05,0.95))
+print(Winsorisation_data)
+```
+
+```{r}
+#4. Apply trimming by removing the top and bottom 5% of the data.
+
+
+#trimmed_data <-  RandomValues[!RandomValues %in% outliers]
+#print(trimmed_data)
+
+
+trimmed_data <- RandomValues[RandomValues > quantile(RandomValues, 0.05) & RandomValues < quantile(RandomValues, 0.95)]
+print(trimmed_data)
+
+#Visualizing the data after treating the outlier
+plot(trimmed_data)
+```
+
+
+```{r}
+#5. Apply mean imputation to the outliers.
+copy_RandomValues<- RandomValues
+z_scores_RandomValues<-scale(copy_RandomValues)
+treshold<- 2
+outliers_RandomValues<- copy_RandomValues[abs(z_scores_RandomValues)>treshold]
+print('This is outliers: \n')
+print(outliers_RandomValues)
+
+copy_RandomValues[abs(z_scores_RandomValues)>treshold]<-NA
+mean_val<- mean(copy_RandomValues,na.rm = TRUE)
+print(paste('This is mean value: ',mean_val,'\n'))
+Impute_data<- Impute(copy_RandomValues,mean_val)
+print('This is Impute_data: \n')
+print(Impute_data)
+#Visualizing the data after treating the outlier
+plot(Impute_data)
+```
+
+
+```{r}
+#6. Apply a logarithmic transformation to the dataset
+log_RandomValues<- log(RandomValues)
+print(log_RandomValues)
+```

@@ -1,0 +1,129 @@
+---
+title: "R-mtcars Visualisation"
+author: "Shirin Abolfath Zadeh"
+date: "2023-04-03"
+output: html_document
+---
+
+
+
+#Enhance the visualisations created in this tutorial by customizing them according to your preferences.
+#You can use different colours, shapes, and themes for your plots. Explore the ggplot2 documentation
+#(https://ggplot2.tidyverse.org/reference/) to learn more about available customization options.
+
+
+```{r}
+#1. Modify the histogram and box plot in the univariate analysis section with new colours, fill,and themes.
+hist(mtcars$mpg,xlab = "Miles Per Gallon", main = "Histogram for MPG", col = "blue", breaks = 10, ylim = c(0,30))
+
+```
+```{r}
+plot(mtcars$gear, mtcars$mpg, type = "l", col = "red", lty = "dashed", lwd = 3)     # Try "o" "p" "l" "b"
+
+plot(mtcars$gear, mtcars$mpg, type = "p", col = "blue")     # Try "o" "p" "l" "b"
+
+plot(mtcars$gear, mtcars$mpg, type = "b", col = "green", lty = "dotted")     # Try "o" "p" "l" "b"
+
+#To draw boxplots for disp (Displacement) and hp (Horse Power)
+boxplot(mtcars[,3:4])
+
+boxplot(mtcars[,c(6,3,4)])
+
+
+```
+```{r}
+mtcars$am <- as.factor(mtcars$am)
+mtcars$cyl <- as.factor(mtcars$cyl)
+mtcars$vs <- as.factor(mtcars$vs)
+mtcars$gear <- as.factor(mtcars$gear) 
+#To draw scatter plot
+ggplot(mtcars, aes(x= cyl , y= vs)) + geom_point()
+```
+
+
+
+```{r}
+ggplot(mtcars, aes(x = cyl, fill = am)) + 
+  geom_bar(position = "fill") + 
+  theme_classic()+ 
+  labs(x = "Cylinders",y = "Proportion",fill = "Transmission")
+```
+
+```{r}
+ggplot(mtcars, aes(mpg,fill = cyl)) + 
+  geom_histogram(binwidth = 1,position = "identity", alpha = 0.5)+ 
+  theme_bw()+ 
+  labs(title = "Miles per Gallon by Cylinders",x = "Miles per Gallon",y = "Count",fill = "Cylinders")
+
+```
+```{r}
+ggplot(mtcars, aes(x = cyl,y = mpg)) + 
+  geom_boxplot(fill = "cyan", alpha = 0.5) + 
+  theme_bw() + 
+  labs(title = "Cylinder count vs Miles per Gallon",x = "Cylinders",      
+       y = "Miles per Gallon")
+
+```
+
+```{r}
+#2. Customize the scatter plot in the bivariate analysis section with different point shapes,sizes, and colours.
+
+ggplot(mtcars, aes(x= cyl,y= vs,color = am)) + geom_jitter(width = 0.1, alpha = 0.5)
+
+```
+
+```{r}
+#3. Change the appearance of the correlation matrix plot and heatmap in the multivariate analysis section.
+
+ggplot(data = mtcars, aes(x=cyl, y=vs, fill=am)) + 
+  geom_tile()
+
+```
+```{r}
+install.packages('reshape2')
+```
+
+```{r}
+### Libraries
+library(ggplot2)
+library(reshape2)
+
+### Let's melt the corralation matrix
+melted_mtcars <- melt(mtcars)
+head(melted_mtcars)
+```
+```{r}
+ggplot(data = melted_mtcars, aes(x=cyl, y=am, fill = gear )) +
+  geom_tile()
+```
+```{r}
+get_lower_tri<-function(mtcars){
+  mtcars[upper.tri(mtcars)] <- NA
+  return(mtcars)
+}
+### Get upper triangle of the correlation matrix
+get_upper_tri <- function(mtcars){
+  mtcars[lower.tri(mtcars)]<- NA
+  return(mtcars)
+}
+
+upper_tri <- get_upper_tri(mtcars)
+upper_tri
+```
+
+
+```{r}
+### Melt
+melted_mtcars <- melt(upper_tri, na.rm = TRUE)
+
+### Heatmap
+ggplot(data = melted_mtcars, aes(cyl, am, fill = gear))+
+ geom_tile(color = "white")+
+ scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+   midpoint = 0, limit = c(-1,1), space = "Lab", 
+   name="Correlation") +
+  theme_minimal()+ 
+ theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+    size = 12, hjust = 1))+
+ coord_fixed()
+```

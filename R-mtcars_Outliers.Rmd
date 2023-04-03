@@ -1,0 +1,120 @@
+---
+title: "R-mtcars Outliers"
+author: "Shirin Abolfath Zadeh"
+date: "2023-04-03"
+output: html_document
+---
+#------------------------------------------------------------------
+#Activity 4: Real-world Dataset Analysis
+```{r}
+#1. Import the dataset into R.
+data(mtcars)
+mtcars
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+```
+```{r}
+#2. Visualize the dataset using different plots to identify potential outliers.
+plot(mtcars$wt)
+plot( mtcars$mpg)
+```
+
+
+```{r}
+# outliers
+ggplot(mtcars, aes(x = "", y = mpg)) + 
+  geom_boxplot() +
+  labs(x = NULL, y = "mpg") +
+  theme_bw()
+
+```
+```{r}
+# relationships
+ggplot(mtcars, aes(x = cyl, y = mpg)) + 
+  geom_point() +
+  labs(x = "cyl", y = "mpg") +
+  theme_bw()
+```
+```{r}
+hist(mtcars[,c('mpg')])
+```
+
+
+
+
+
+```{r}
+#3. Choose two outlier detection methods and apply them to the "mpg" variable.
+
+```
+```{r}
+#Z-score method 
+mpg_data<- mtcars$mpg
+z_scores_mpg<-scale(mpg_data)
+treshold<- 2
+outliers_mpg<- mpg_data[abs(z_scores_mpg)>treshold]
+print(outliers_mpg)
+```
+```{r}
+#IQR method .
+
+mpg_data<- mtcars$mpg
+IQR_value_mpg<-IQR(mpg_data)
+Q1_mpg<- quantile(mpg_data,0.25)
+Q2_mpg<- quantile(mpg_data,0.75)
+l_bound_mpg<- Q1_mpg -1.5*IQR_value_mpg
+U_bound_mpg<- Q2_mpg +1.5*IQR_value_mpg
+outliers_mpg_IQR<- mpg_data[mpg_data< l_bound_mpg | mpg_data > U_bound_mpg]
+
+print('outliers are: \n')
+print(outliers_mpg_IQR)
+plot(outliers_mpg_IQR)
+```
+```{r}
+#Tukey'sfences.
+mpg_data<- mtcars$mpg
+outliers_Tukey_mpg<- boxplot.stats(mpg_data)$out
+print(outliers_Tukey_mpg)
+```
+```{r}
+library(outliers)
+#Grubbs' test.
+grabbs_result_mpg<- grubbs.test(mpg_data,type=10,opposite=FALSE)
+print(grabbs_result_mpg)
+```
+```{r}
+ #Fill missing values with the mean value
+#mean_marks <- mean(student_data$marks, na.rm = TRUE)
+#student_data$marks[is.na(student_data$marks)] <- mean_marks
+```
+
+```{r}
+#4. Based on the analysis, decide on an appropriate outlier handling technique and apply it.
+#based on the implemented methods 33.9 is the outlier od this data.
+
+# Apply mean imputation to the outliers.
+
+copy_Values<- mtcars$mpg
+
+IQR_mpg<-IQR(copy_Values)
+Q1_mpg<- quantile(copy_Values,0.25)
+Q2_mpg<- quantile(copy_Values,0.75)
+l_bound_mpg<- Q1_mpg -1.5*IQR_value_mpg
+U_bound_mpg<- Q2_mpg +1.5*IQR_value_mpg
+outliers_mpg_IQR<- copy_Values[copy_Values< l_bound_mpg | copy_Values > U_bound_mpg]
+print(paste('This is outliers value: ',outliers_mpg_IQR,'\n'))
+
+copy_Values[copy_Values< l_bound_mpg | copy_Values > U_bound_mpg]<-NA
+print('replace with NA:')
+print(copy_Values)
+mean_val<- mean(copy_Values,na.rm = TRUE)
+print(paste('This is mean value: ',mean_val,'\n'))
+Impute_data<- Impute(copy_Values,mean_val)
+print('This is Impute_data: \n')
+print(Impute_data)
+#Visualizing the data after treating the outlier
+plot(Impute_data)
+```

@@ -1,0 +1,132 @@
+---
+title: "R-mtcars Outliers"
+author: "Shirin Abolfath Zadeh"
+date: "2023-04-03"
+output: html_document
+---
+#===============================================================================
+#Activity 5: Analysing a different dataset
+
+
+```{r}
+#1. Load your dataset into R.
+getwd()
+setwd("C:/Uni_doc/Data_Science/Assignment1/gov_data")
+#getwd()
+fuel_data <- read.csv("fuel_poverty_data_2019.csv")
+fuel_data
+```
+```{r}
+str(fuel_data)
+```
+```{r}
+colnames(fuel_data)
+
+```
+```{r}
+nrow(fuel_data)
+  ncol(fuel_data)
+  head(fuel_data, n=10)# default n=6 # Assumption- File name is Data
+  tail(fuel_data, n=8) # default n=6
+  str(fuel_data) 
+  summary(fuel_data)
+```
+#2. Perform data cleaning and preprocessing.
+
+```{r}
+# Check for missing values
+sum(is.na(fuel_data))
+
+```
+```{r}
+# check for duplicate rows
+duplicate_rows <- fuel_data[duplicated(fuel_data),]
+if (nrow(duplicate_rows) > 0) {
+  cat("There are", nrow(duplicate_rows), "duplicate rows in the dataset.\n")
+} else {
+  cat("There are no duplicate rows in the dataset.\n")
+}
+```
+#3. Conduct univariate, bivariate, and multivariate analyses.
+
+
+```{r}
+#1. Create a boxplot for the "Ozone" variable
+boxplot(fuel_data[,c('HousingCosts')])
+boxplot(fuel_data[,c('FPEERband')])
+```
+```{r}
+# scatter.smooth of "Ozone" against "Wind"
+scatter.smooth(fuel_data[,c('HousingCosts','FPEERband')])
+
+```
+```{r}
+#3. Create a histogram for the "Ozone" variable.
+hist(fuel_data[,c('FPEERband')])
+```
+
+```{r}
+library(tidyr)
+fuel_data=drop_na(fuel_data)
+```
+
+```{r}
+#4. Create a density plot for the "Ozone" variable.
+d <- density(fuel_data$FPEERband)
+plot(d, main=" Density of FPEERband")
+polygon(d, col="red", border="blue")
+```
+#-------------------------------------------------------------------------------
+# 4. Detect and handle outliers.
+
+```{r}
+#1. Detect outliers using the Z-score method with a threshold of 2.
+HousingCosts_data<- fuel_data$HousingCosts
+z_scores_HousingCosts<-scale(HousingCosts_data)
+treshold<- 2
+outliers_HousingCosts<- HousingCosts_data[abs(z_scores_HousingCosts)>treshold]
+print(outliers_HousingCosts)
+```
+```{r}
+#2. Detect outliers using the IQR method with a multiplier of 1.5.
+
+HousingCosts_data<- fuel_data$HousingCosts
+IQR_HousingCosts<-IQR(HousingCosts_data)
+Q1<- quantile(HousingCosts_data,0.25)
+Q2<- quantile(HousingCosts_data,0.75)
+l_bound<- Q1-1.5*IQR_HousingCosts
+U_bound<- Q2+1.5*IQR_HousingCosts
+outliers_IQR_HousingCosts<- HousingCosts_data[HousingCosts_data<l_bound | HousingCosts_data > U_bound]
+print(outliers_IQR_HousingCosts)
+```
+```{r}
+#3. Detect outliers using Tukey'sfences.
+HousingCosts_data<- fuel_data$HousingCosts
+outliers_Tukey_HousingCosts<- boxplot.stats(HousingCosts_data)$out
+print(outliers_Tukey_HousingCosts)
+```
+
+```{r}
+
+copy_fuel_HP<- fuel_data$HousingCosts
+
+IQR_HP<-IQR(copy_fuel_HP)
+Q1_HP<- quantile(copy_fuel_HP,0.25)
+Q2_HP<- quantile(copy_fuel_HP,0.75)
+l_bound_HP<- Q1_HP -1.5*IQR_HP
+U_bound_HP<- Q2_HP +1.5*IQR_HP
+outliers_HP<- copy_fuel_HP[copy_fuel_HP< l_bound_HP | copy_fuel_HP > U_bound_HP]
+print('These are outliers value:')
+print(outliers_HP)
+
+copy_fuel_HP[copy_fuel_HP< l_bound_HP | copy_fuel_HP > U_bound_HP]<-NA
+print('replace with NA:')
+print(copy_fuel_HP)
+mean_valHP<- mean(copy_fuel_HP,na.rm = TRUE)
+print(paste('This is mean value: ',mean_valHP,'\n'))
+Impute_dataHP<- Impute(copy_fuel_HP,mean_valHP)
+print('This is Impute_data: \n')
+print(Impute_dataHP)
+#Visualizing the data after treating the outlier
+plot(Impute_dataHP)
+```

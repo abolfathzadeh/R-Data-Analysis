@@ -1,0 +1,111 @@
+---
+title: "R-mtcars Outliers"
+author: "Shirin Abolfath Zadeh"
+date: "2023-04-03"
+output: html_document
+---
+#The "mtcars" dataset mostly contains continuous variables. Find a dataset with categorical variables
+#(e.g., the Titanic dataset) and explore the relationships between these variables using appropriate
+#visualization techniques, such as bar plots, stacked bar plots, and mosaic plots
+
+```{r}
+data(mtcars)
+#To analyze the structure of the dataset
+str(mtcars)
+
+```
+
+
+
+```{r}
+data("mtcars")
+mtcars
+```
+```{r}
+
+#To plot mpg(Miles per Gallon) vs Number of cars
+plot(mtcars$mpg, xlab = "the Number of cars", ylab = "Miles per Gallon", col = "green")
+```
+
+```{r}
+install.packages('explore')
+library(explore)
+```
+
+```{r}
+t_mtcars <- as_tibble(mtcars)
+#To analyze the structure of the dataset
+str(t_mtcars)
+
+```
+
+```{r}
+t_mtcars %>% describe_tbl()
+```
+
+
+```{r}
+t_mtcars %>% describe()
+```
+```{r}
+t_mtcars %>% explore(cyl)
+```
+
+```{r}
+t_mtcars %>% explore_all(n = cyl)
+```
+```{r}
+t_mtcars %>% explore(vs, target = gear, n = hp, split = FALSE)
+```
+
+
+
+
+
+```{r}
+#titanic %>% explain_tree(target = gear, n = hp)
+```
+
+
+
+```{r}
+t_mtcars %>% explore(vs, target = gear, n = hp)
+```
+
+```{r}
+install.packages('tidyverse')
+install.packages('extrafont')
+install.packages('extrafontdb')
+```
+```{r}
+library(tidyverse)
+library(extrafont)
+library(extrafontdb)
+```
+
+
+```{r}
+#t_mtcars %>% explore(vs, target = gear, n = hp)
+t_mtcars %>% 
+  ggplot(aes(x = wt, fill = gear)) +
+  geom_bar(width = 0.4) +
+  labs(title = "wt rates by gear", x = NULL, y = "")
+```
+```{r}
+# Boxplot
+#t_mtcars %>% explore(vs, target = gear, n = hp)
+t_mtcars %>% 
+  ggplot(aes(x = hp, y = wt)) +
+  geom_boxplot() +
+  theme_classic() +
+  labs(title = "hp rates by wt", x = NULL)
+```
+
+```{r}
+barplot(mtcars$hp,xlab = "HorsePower", col = "cyan", horiz = TRUE)
+barplot(mtcars$hp, ylab = "HorsePower", col = "cyan", horiz = FALSE)
+
+barplot(mtcars[,c(3)], col = "yellow")
+```
+
+
